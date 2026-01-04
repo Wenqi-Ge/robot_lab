@@ -59,15 +59,31 @@ The table below lists all available environments:
 
 - Install Isaac Lab by following the [installation guide](https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/index.html). We recommend using the conda installation as it simplifies calling Python scripts from the terminal.
 
+- in my setting, I use the command below to install
+
+  ```bash
+  conda create -n robot_lab_winky python=3.11 -y
+  conda activate robot_lab_winky
+  pip install "isaacsim[all,extscache]==5.1.0" --extra-index-url https://pypi.nvidia.com
+  
+  cd robot_lab
+  git submodule add https://github.com/isaac-sim/IsaacLab.git
+  cd Isaaclab
+  ./isaaclab -i
+  # test env
+  python scripts/tutorials/00_sim/create_empty.py
+  ```
+
 - Clone this repository separately from the Isaac Lab installation (i.e. outside the `IsaacLab` directory):
 
   ```bash
-  git clone https://github.com/fan-ziqi/robot_lab.git
+  git clone https://github.com/Wenqi-Ge/robot_lab.git
   ```
 
 - Using a python interpreter that has Isaac Lab installed, install the library
 
   ```bash
+  cd ..
   python -m pip install -e source/robot_lab
   ```
 
