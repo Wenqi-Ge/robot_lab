@@ -1,0 +1,53 @@
+{
+    // Python 配置
+    "python.defaultInterpreterPath": "${HOME}/anaconda3/envs/robot_lab_winky/bin/python",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    // Pylance/Pyright 配置
+    "python.languageServer": "None",
+    "python.analysis.diagnosticMode": "workspace",
+    // 文件关联
+    "files.associations": {
+        "*.toml": "toml"
+    },
+    // 编辑器配置
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    // 排除文件
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/.pytest_cache": true,
+        "**/.mypy_cache": true
+    },
+    // 搜索排除
+    "search.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/node_modules": true,
+        "**/.git": true,
+        "**/.venv": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/*.egg-info": true
+    },
+    "cursorpyright.enabled": true,
+    "cursorpyright.pythonInterpreter": "/home/winky/anaconda3/envs/robot_lab_winky/bin/python",
+    "cursorpyright.analysis.diagnosticMode": "workspace",
+    "cursorpyright.analysis.typeCheckingMode": "basic",
+    "cursorpyright.analysis.autoImportCompletions": true,
+    "python-envs.defaultEnvManager": "ms-python.python:conda",
+    "python-envs.defaultPackageManager": "ms-python.python:conda",
+    "python-envs.pythonProjects": [],
+    // 关键配置：extraPaths 指向包含 Python 包的目录
+    // "python.analysis.extraPaths": [
+    "cursorpyright.analysis.extraPaths": [
+        "${workspaceFolder}/source/robot_lab",
+        "${workspaceFolder}/IsaacLab/source/isaaclab",
+        "${workspaceFolder}/IsaacLab/source/isaaclab_tasks",
+        "${workspaceFolder}/IsaacLab/source/isaaclab_rl",
+        "${workspaceFolder}/IsaacLab/source/isaaclab_mimic"
+    ]
+}

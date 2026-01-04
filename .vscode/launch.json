@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CONDA_DEFAULT_ENV": "robot_lab_winky"
+            }
+        },
+        {
+            "name": "Python: Train RSL-RL",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "scripts.reinforcement_learning.rsl_rl.train",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "CONDA_DEFAULT_ENV": "robot_lab_winky"
+            },
+            "args": [
+                "--task=RobotLab-Isaac-BeyondMimic-Flat-Unitree-G1-v0",
+                "--headless"
+            ]
+        }
+    ]
+}
