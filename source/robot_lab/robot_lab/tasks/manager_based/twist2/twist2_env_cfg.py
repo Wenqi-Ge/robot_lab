@@ -91,9 +91,8 @@ class CommandsCfg:
     # _tar_motion_steps_priv:list[int] = [1] # teacher 21 # student 1
     # _tar_motion_steps_priv:list[int] = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45,
     #                      50, 55, 60, 65, 70, 75, 80, 85, 90, 95,] # teacher 21 # student 1
-    #TODO: 用 future motion latent space 替代未来帧
+    # TODO: 用 future motion latent space 替代未来帧
     # 当前版本，无论teacher还是student，只使用当前帧作为输入
-
 
     # motion = mdp.MotionCommandCfg(
     #     asset_name="robot",
@@ -131,15 +130,15 @@ class ObservationsCfg:
         """Observations for policy group."""
 
         # observation terms (order preserved)
-        '''Ref Twist2
+        """Ref Twist2
         - Root Position: ±1-5cm noise range 
         - Root Orientation: ±5.7-11.4° noise range (±0.1-0.2 rad)
         - Root Velocity: ±0.05-0.1 noise range
         - Joint Positions: ±0.05-0.1 rad noise range
-        '''
-
+        """
 
         # command (ref motion)
+        # - cmd: root vel/posi/rot
 
         # base_link posi_w
 
@@ -147,43 +146,63 @@ class ObservationsCfg:
 
         # IMU (base: roll, pitch, yaw)
 
+
+        ### Proprioceptive Observations
         # base_vel
         base_lin_vel = ObsTerm(
-            func=mdp.base_lin_vel, noise=Unoise(n_min=-0.5, n_max=0.5)
+            func=mdp.base_lin_vel,
+            scale=2.0, 
+            noise=Unoise(n_min=-0.5, n_max=0.5),
         )
 
         # base angle vel
         base_ang_vel = ObsTerm(
-            func=mdp.base_ang_vel, noise=Unoise(n_min=-0.2, n_max=0.2)
+            func=mdp.base_ang_vel, 
+            scale=0.25,
+            noise=Unoise(n_min=-0.2, n_max=0.2),
         )
+
+        # IMU
+        projected_gravity = ObsTerm(
+            func=mdp.projected_gravity, 
+            scale=1.0, 
+            noise=Unoise(n_min=-0.05, n_max=0.05),
+        )
+
+        # dof
+        joint_pos = ObsTerm(
+            func=mdp.joint_pos_rel, 
+            params={"asset_cfg": SceneEntityCfg("robot", 
+                                                joint_names=JOINT_NAMES_ACTION, 
+                                                preserve_order=True)},
+            scale=1.0, 
+        )
+
+        # dof vel | 禁用脚踝关节，靠近地面，数据质量差
+        joint_vel = ObsTerm(
+            func=mdp.joint_vel_rel, 
+            params={"asset_cfg": SceneEntityCfg("robot", 
+                                                joint_names=JOINT_NAMES_ACTION_WITHOUT_ANKLE, 
+                                                preserve_order=True)},
+            scale=0.05, 
+        )
+
+        # action
+        actions = ObsTerm(
+            func=mdp.last_action, 
+            scale=1.0
+        )
+
+        ### Error Observations
 
         # base_link local posi delta | 相对上一帧的位置增量
 
         # base_link local rot delta | 相对上一帧的旋转增量
 
-        # local keypoint position 
-
-
-        # dof pos 
-        joint_pos = ObsTerm(
-            func=mdp.joint_pos_rel, noise=Unoise(n_min=-0.01, n_max=0.01)
-        )
-
-        # dof vel
-        joint_vel = ObsTerm(func=mdp.joint_vel_rel, noise=Unoise(n_min=-0.5, n_max=0.5))
-
-        # last action
-        actions = ObsTerm(func=mdp.last_action)
 
 
         # Domain Rand Params
 
-
-        
-        
-        
-        
-        
         def __post_init__(self):
             self.enable_corruption = True
             self.concatenate_terms = True
@@ -214,8 +233,8 @@ class ObservationsCfg:
             self.history_length = 21
 
     # observation groups
-    policy: PolicyCfg = PolicyCfg()
-    critic: CriticCfg = CriticCfg()
+    teacher_policy: TeacherPolicyCfg = TeacherPolicyCfg()
+    student_policy: StudentPolicyCfg = StudentPolicyCfg()
 
 
 @configclass
@@ -329,10 +348,10 @@ class RewardsCfg:
 class TerminationsCfg:
     """Termination terms for the MDP."""
 
-    _enable_early_termination:bool = True
-    _pose_termination:bool = False
-    _pose_termination_distance:float = 1.0
-    _root_tracking_termination_distance:float = 0.7
+    _enable_early_termination: bool = True
+    _pose_termination: bool = False
+    _pose_termination_distance: float = 1.0
+    _root_tracking_termination_distance: float = 0.7
 
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
     anchor_pos = DoneTerm(
