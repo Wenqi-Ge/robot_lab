@@ -29,6 +29,7 @@ from isaaclab.utils import configclass
 from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 
 import robot_lab.tasks.manager_based.twist2.mdp as mdp
+from robot_lab.tasks.manager_based.twist2.mdp.assets_name import *  # noqa: F401, F403
 
 ##
 # Constants
@@ -147,7 +148,7 @@ class ObservationsCfg:
         # IMU (base: roll, pitch, yaw)
 
 
-        ### Proprioceptive Observations
+        ### Privileged Observations
         # base_vel
         base_lin_vel = ObsTerm(
             func=mdp.base_lin_vel,
@@ -169,6 +170,9 @@ class ObservationsCfg:
             noise=Unoise(n_min=-0.05, n_max=0.05),
         )
 
+
+
+        ### Proprioceptive Observations
         # dof
         joint_pos = ObsTerm(
             func=mdp.joint_pos_rel, 
